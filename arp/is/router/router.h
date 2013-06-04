@@ -19,6 +19,8 @@ router.h
 #include <systemc>
 // ArchC includes
 #include "ac_tlm_protocol.H"
+// Memory
+#include "ac_tlm_mem.h"
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -42,21 +44,50 @@ public:
   /// Exposed port with ArchC interface
   sc_export< ac_tlm_transport_if > target_export;
 
-
   /**
    * Default constructor.
    *
-   * @param k Memory size in kilowords.
+   * @param *mem memory to be attached to this router
    *
    */
-  router_t( sc_module_name module_name );
+  router_t( sc_module_name module_name, ac_tlm_mem *mem );
 
   /**
-   * Default destructor.
-   */
-  ~router_t();
+   * Implementation of TLM transport method that
+   * handle packets of the protocol doing apropriate actions.
+   * This method must be implemented (required by SystemC TLM).
+   * @param request is a received request packet
+   * @return A response packet to be send
+  */
+  ac_tlm_rsp transport( const ac_tlm_req &request ) {
+
+    ac_tlm_rsp response;
+
+    switch( request.type ) {
+    case READ :     // Packet is a READ one
+      #ifdef DEBUG  // Turn it on to print transport level messages
+    cout << "Transport READ at 0x" << hex << request.addr << " value ";
+    cout << response.data << endl;
+      #endif
+      response.status = mem->readm( request.addr , response.data );
+      break;
+    case WRITE:     // Packet is a WRITE
+      #ifdef DEBUG
+    cout << "Transport WRITE at 0x" << hex << request.addr << " value ";
+    cout << request.data << endl;
+      #endif
+      response.status = mem->writem( request.addr , request.data );
+      break;
+    default :
+      response.status = ERROR;
+      break;
+    }
+
+    return response;
+  }
 
 private:
+  ac_tlm_mem *mem;
 
 };
 

@@ -33,7 +33,7 @@ int sc_main(int ac, char *av[])
   //!  ISA simulator
   mips1 mips1_proc1("mips1");
   ac_tlm_mem mem("mem");
-  router_t router("router", mips1_proc1, mem);
+  router_t router("router", &mem);
 
 #ifdef AC_DEBUG
   ac_trace("mips1_proc1.trace");

@@ -15,21 +15,17 @@ Router.cpp
 
 //////////////////////////////////////////////////////////////////////////////
 
-/// Namespace to isolate memory from ArchC
-using user::router;
+/// Namespace to isolate router from ArchC
+using user::router_t;
+using user::ac_tlm_mem;
 
 /// Constructor
-router::router_t( sc_module_name module_name ) :
+router_t::router_t( sc_module_name module_name, ac_tlm_mem *mem ) :
   sc_module( module_name ),
-  target_export("iport")
+  target_export("iport"),
+  mem( mem )
 {
     /// Binds target_export to the memory
     target_export( *this );
 
-}
-
-/// Destructor
-router::~router_t() {
-
- 
 }
