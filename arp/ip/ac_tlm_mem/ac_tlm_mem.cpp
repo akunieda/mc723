@@ -79,7 +79,7 @@ ac_tlm_rsp_status ac_tlm_mem::writem( const uint32_t &a , const uint32_t &d )
   * @param d id the data that will be read
   * @returns A TLM response packet with SUCCESS and a modified d
 */
-ac_tlm_rsp_status ac_tlm_mem::readm( uint32_t &d )
+ac_tlm_rsp_status ac_tlm_mem::readm( const uint32_t &a , uint32_t &d )
 {
   *((uint32_t *) &d) = *((uint32_t *) &memory[a]);
 

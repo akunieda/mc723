@@ -73,7 +73,7 @@ public:
   */
 
   ac_tlm_rsp_status readm( uint32_t & );
-  ac_tlm_rsp_status writem();
+  ac_tlm_rsp_status writem( uint32_t & );
 
   ac_tlm_rsp transport( const ac_tlm_req &request ) {
 
@@ -81,19 +81,19 @@ public:
 
     switch( request.type ) {
     case READ :     // Packet is a READ one
+      response.status = readm( response.data );
       #ifdef DEBUG  // Turn it on to print transport level messages
-    cout << "Trying to get LOCK";
+    cout << "Trying to get LOCK ";
     cout << response.data << endl;
       #endif
-      response.status = readm( response.data );
       break;
 
     case WRITE : 
+      response.status = writem( response.data );
       #ifdef DEBUG  // Turn it on to print transport level messages
-    cout << "Releasing LOCK";
+    cout << "Releasing LOCK ";
     cout << response.data << endl;
       #endif
-      response.status = writem();
       break;
 
     default :

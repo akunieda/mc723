@@ -22,10 +22,12 @@ const char *archc_options="-abi -dy ";
 #include  <systemc.h>
 #include  "mips1.H"
 #include  "ac_tlm_mem.h"
+#include  "ac_tlm_lock.h"
 #include  "router.h"
 
 using user::ac_tlm_mem;
-using user::router;
+using user::ac_tlm_lock;
+using user::router_t;
 
 int sc_main(int ac, char *av[])
 {

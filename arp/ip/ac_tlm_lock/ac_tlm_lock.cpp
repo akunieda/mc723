@@ -54,7 +54,7 @@ ac_tlm_lock::ac_tlm_lock( sc_module_name module_name) :
 
 }
 
-ac_tlm_rsp_status ac_tlm_mem::readm( uint32_t &d )
+ac_tlm_rsp_status ac_tlm_lock::readm( uint32_t &d )
 {
   *((uint32_t *) &d) = *((uint32_t *) &memory);
   if (memory == 0)
@@ -63,9 +63,10 @@ ac_tlm_rsp_status ac_tlm_mem::readm( uint32_t &d )
   return SUCCESS;
 }
 
-ac_tlm_rsp_status ac_tlm_mem::writem()
+ac_tlm_rsp_status ac_tlm_lock::writem( uint32_t &d )
 {
-  memory = 1;
+  memory = 0;
+  *((uint32_t *) &d) = *((uint32_t *) &memory);
 
   return SUCCESS;
 }
