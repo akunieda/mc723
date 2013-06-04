@@ -20,12 +20,12 @@ using user::router_t;
 using user::ac_tlm_mem;
 
 /// Constructor
-router_t::router_t( sc_module_name module_name, ac_tlm_mem *mem ) :
+router_t::router_t( sc_module_name module_name, ac_tlm_mem *mem, ac_tlm_lock *lock ) :
   sc_module( module_name ),
   target_export("iport"),
-  mem( mem )
+  mem( mem ),
+  lock( lock )
 {
     /// Binds target_export to the memory
     target_export( *this );
-
 }

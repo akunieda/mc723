@@ -50,7 +50,7 @@ public:
    * @param *mem memory to be attached to this router
    *
    */
-  router_t( sc_module_name module_name, ac_tlm_mem *mem );
+  router_t( sc_module_name module_name, ac_tlm_mem *mem, ac_tlm_lock *lock );
 
   /**
    * Implementation of TLM transport method that
@@ -60,34 +60,14 @@ public:
    * @return A response packet to be send
   */
   ac_tlm_rsp transport( const ac_tlm_req &request ) {
-
-    ac_tlm_rsp response;
-
-    switch( request.type ) {
-    case READ :     // Packet is a READ one
-      #ifdef DEBUG  // Turn it on to print transport level messages
-    cout << "Transport READ at 0x" << hex << request.addr << " value ";
-    cout << response.data << endl;
-      #endif
-      response.status = mem->readm( request.addr , response.data );
-      break;
-    case WRITE:     // Packet is a WRITE
-      #ifdef DEBUG
-    cout << "Transport WRITE at 0x" << hex << request.addr << " value ";
-    cout << request.data << endl;
-      #endif
-      response.status = mem->writem( request.addr , request.data );
-      break;
-    default :
-      response.status = ERROR;
-      break;
-    }
-
-    return response;
+    if ( request.addr == 0xFFFFFFFF )
+      return lock->transport(request);
+    else
+      return mem->transport(request);
   }
 
 private:
-  ac_tlm_mem *mem;
+  ac_tlm_transport_if *mem, *lock;
 
 };
 
