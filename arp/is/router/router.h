@@ -21,6 +21,8 @@ router.h
 #include "ac_tlm_protocol.H"
 // Memory
 #include "ac_tlm_mem.h"
+// Lock
+#include "ac_tlm_lock.h"
 
 //////////////////////////////////////////////////////////////////////////////
 
