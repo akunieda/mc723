@@ -38,10 +38,10 @@
 //////////////////////////////////////////////////////////////////////////////
 
 /// Namespace to isolate memory from ArchC
-using user::ac_tlm_mem;
+using user::router;
 
 /// Constructor
-ac_tlm_mem::ac_tlm_mem( sc_module_name module_name , int k ) :
+router::router_t( sc_module_name module_name , int k ) :
   sc_module( module_name ),
   target_export("iport")
 {
@@ -51,7 +51,7 @@ ac_tlm_mem::ac_tlm_mem( sc_module_name module_name , int k ) :
 }
 
 /// Destructor
-ac_tlm_mem::~ac_tlm_mem() {
+router::~router_t() {
 
  
 }

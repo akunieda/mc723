@@ -56,7 +56,7 @@ namespace user
 {
 
 /// A TLM memory
-class ac_tlm_mem :
+class router_t :
   public sc_module,
   public ac_tlm_transport_if // Using ArchC TLM protocol
 {
@@ -71,12 +71,12 @@ public:
    * @param k Memory size in kilowords.
    *
    */
-  ac_tlm_mem( sc_module_name module_name , int k = 5242880 );
+  router_t( sc_module_name module_name , int k = 5242880 );
 
   /**
    * Default destructor.
    */
-  ~ac_tlm_mem();
+  ~router_t();
 
 private:
 
