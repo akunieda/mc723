@@ -116,7 +116,7 @@ public:
 
 
 private:
-  uint8_t memory;
+  uint32_t memory;
 
 };
 

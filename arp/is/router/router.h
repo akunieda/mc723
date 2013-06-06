@@ -49,7 +49,8 @@ public:
   /**
    * Default constructor.
    *
-   * @param *mem memory to be attached to this router
+   * @param *mem Memory to be attached to this router
+   * @param *lock Lock to be attached to this router
    *
    */
   router_t( sc_module_name module_name, ac_tlm_mem *mem, ac_tlm_lock *lock );

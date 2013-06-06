@@ -43,7 +43,7 @@ public:
   int cur_instr_id;
 
   //!Constructor.
-  mips1_isa(mips1_arch& ref) : mips1_arch_ref(ref) , syscall(ref) {
+  mips1_isa(mips1_arch& ref, int nproc=0) : mips1_arch_ref(ref) , syscall(ref, nproc) {
     //!Building Decoder.
     decoder = ac_decoder_full::CreateDecoder(mips1_isa::formats, mips1_isa::instructions, &ref);
   }

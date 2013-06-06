@@ -24,8 +24,13 @@
 //mips1 system calls
 class mips1_syscall : public ac_syscall<mips1_parms::ac_word, mips1_parms::ac_Hword>, public mips1_arch_ref
 {
+private:
+  int nproc; // Number of this processor (indexed in 0)
 public:
-  mips1_syscall(mips1_arch& ref) : ac_syscall<mips1_parms::ac_word, mips1_parms::ac_Hword>(ref, mips1_parms::AC_RAMSIZE), mips1_arch_ref(ref) {};
+  mips1_syscall(mips1_arch& ref, int nproc) :
+    ac_syscall<mips1_parms::ac_word, mips1_parms::ac_Hword>(ref, mips1_parms::AC_RAMSIZE),
+    mips1_arch_ref(ref),
+    nproc(nproc) {};
   virtual ~mips1_syscall() {};
 
   void get_buffer(int argn, unsigned char* buf, unsigned int size);

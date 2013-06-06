@@ -53,7 +53,7 @@ public:
   SC_HAS_PROCESS( mips1 );
 
   //!Constructor.
-  mips1( sc_module_name name_ ): ac_module(name_), mips1_arch(), ISA(*this) {
+  mips1( sc_module_name name_, int nproc=0 ): ac_module(name_), mips1_arch(), ISA(*this, nproc) {
 
     SC_THREAD( behavior );
     bhv_pc = 0; 

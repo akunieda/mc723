@@ -33,7 +33,7 @@ int sc_main(int ac, char *av[])
 {
 
   //!  ISA simulator
-  mips1 mips1_proc1("mips1");
+  mips1 mips1_proc1("mips1", 2);
   ac_tlm_mem mem("mem");
   ac_tlm_lock lock("lock");
   router_t router("router", &mem, &lock);
