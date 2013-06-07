@@ -33,7 +33,8 @@ int sc_main(int ac, char *av[])
 {
 
   //!  ISA simulator
-  mips1 mips1_proc1("mips1", 2);
+  mips1 mips1_proc0("mips0", 0);
+  mips1 mips1_proc1("mips1", 1);
   ac_tlm_mem mem("mem");
   ac_tlm_lock lock("lock");
   router_t router("router", &mem, &lock);
@@ -42,13 +43,29 @@ int sc_main(int ac, char *av[])
   ac_trace("mips1_proc1.trace");
 #endif 
 
+  mips1_proc0.DM_port(router.target_export);
   mips1_proc1.DM_port(router.target_export);
 
-  mips1_proc1.init(ac, av);
+  int ac0 = ac, ac1 = ac;
+  char **av0, **av1;
+  av0 = (char**) malloc(ac * sizeof(char*));
+  for(int i=0; i<ac; ++i) {
+    av0[i] = (char*) malloc(sizeof(av[i]) + 1);
+    strcpy(av0[i], av[i]);
+  }
+  av1 = (char**) malloc(ac * sizeof(char*));
+  for(int i=0; i<ac; ++i) {
+    av1[i] = (char*) malloc(sizeof(av[i]) + 1);
+    strcpy(av1[i], av[i]);
+  }
+
+  mips1_proc0.init(ac0, av0);
+  mips1_proc1.init(ac1, av1);
   cerr << endl;
 
   sc_start();
 
+  mips1_proc0.PrintStat();
   mips1_proc1.PrintStat();
   cerr << endl;
 
