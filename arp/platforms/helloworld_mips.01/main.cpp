@@ -29,12 +29,34 @@ using user::ac_tlm_mem;
 using user::ac_tlm_lock;
 using user::router_t;
 
+char ** copy_arg(int ac, char *av[]) {
+  char **av0;
+
+  av0 = (char**) malloc(ac * sizeof(char*));
+  for(int i=0; i<ac; ++i) {
+    av0[i] = (char*) malloc(sizeof(av[i]) + 1);
+    strcpy(av0[i], av[i]);
+  }
+
+  return av0;
+}
+
 int sc_main(int ac, char *av[])
 {
-
+  int num_proc = 5;
   //!  ISA simulator
-  mips1 mips1_proc0("mips0", 0);
-  mips1 mips1_proc1("mips1", 1);
+  mips1 *k_proc[num_proc];
+
+  for(int n=0; n<num_proc; n++) {
+    char * name = (char *) malloc(6*sizeof(char));
+    char buffer[3];
+    sprintf(buffer, "%d", n);
+    strcpy(name, "mips");
+    strcat(name, buffer);
+    printf("%s\n", name);
+    k_proc[n] = new mips1(name, n);
+  } 
+
   ac_tlm_mem mem("mem");
   ac_tlm_lock lock("lock");
   router_t router("router", &mem, &lock);
@@ -43,40 +65,37 @@ int sc_main(int ac, char *av[])
   ac_trace("mips1_proc1.trace");
 #endif 
 
-  mips1_proc0.DM_port(router.target_export);
-  mips1_proc1.DM_port(router.target_export);
-
-  int ac0 = ac, ac1 = ac;
-  char **av0, **av1;
-  av0 = (char**) malloc(ac * sizeof(char*));
-  for(int i=0; i<ac; ++i) {
-    av0[i] = (char*) malloc(sizeof(av[i]) + 1);
-    strcpy(av0[i], av[i]);
-  }
-  av1 = (char**) malloc(ac * sizeof(char*));
-  for(int i=0; i<ac; ++i) {
-    av1[i] = (char*) malloc(sizeof(av[i]) + 1);
-    strcpy(av1[i], av[i]);
+  int ac_proc[num_proc];
+  int ac_b = ac;
+  char **av_proc[num_proc];
+  for(int n=0; n<num_proc; n++) {
+    k_proc[n]->DM_port(router.target_export);
+    av_proc[n] = copy_arg(ac,av);
+    ac_proc[n] = ac_b;
   }
 
-  mips1_proc0.init(ac0, av0);
-  mips1_proc1.init(ac1, av1);
+  for(int n=0; n<num_proc; n++) 
+     k_proc[n]->init(ac_proc[n], av_proc[n]);
+
   cerr << endl;
 
   sc_start();
 
-  mips1_proc0.PrintStat();
-  mips1_proc1.PrintStat();
+  for(int n=0; n<num_proc; n++) 
+     k_proc[n]->PrintStat();
+
   cerr << endl;
 
 #ifdef AC_STATS
-  mips1_proc1.ac_sim_stats.time = sc_simulation_time();
-  mips1_proc1.ac_sim_stats.print();
+//  mips1_proc1.ac_sim_stats.time = sc_simulation_time();
+//  mips1_proc1.ac_sim_stats.print();
 #endif 
 
 #ifdef AC_DEBUG
   ac_close_trace();
 #endif 
 
-  return mips1_proc1.ac_exit_status;
+//  return mips1_proc0.ac_exit_status;
+    return k_proc[0]->ac_exit_status;
+
 }
