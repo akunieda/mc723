@@ -18,13 +18,15 @@ Router.cpp
 /// Namespace to isolate router from ArchC
 using user::router_t;
 using user::ac_tlm_mem;
+using user::ac_tlm_rand;
 
 /// Constructor
-router_t::router_t( sc_module_name module_name, ac_tlm_mem *mem, ac_tlm_lock *lock ) :
+router_t::router_t( sc_module_name module_name, ac_tlm_mem *mem, ac_tlm_lock *lock, ac_tlm_rand *randcomp) :
   sc_module( module_name ),
   target_export("iport"),
   mem( mem ),
-  lock( lock )
+  lock( lock ),
+  randcomp( randcomp )
 {
     /// Binds target_export to the memory
     target_export( *this );

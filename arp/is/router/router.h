@@ -23,6 +23,8 @@ router.h
 #include "ac_tlm_mem.h"
 // Lock
 #include "ac_tlm_lock.h"
+// Rand
+#include "ac_tlm_rand.h"
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -53,7 +55,7 @@ public:
    * @param *lock Lock to be attached to this router
    *
    */
-  router_t( sc_module_name module_name, ac_tlm_mem *mem, ac_tlm_lock *lock );
+  router_t( sc_module_name module_name, ac_tlm_mem *mem, ac_tlm_lock *lock, ac_tlm_rand *randcomp);
 
   /**
    * Implementation of TLM transport method that
@@ -65,12 +67,14 @@ public:
   ac_tlm_rsp transport( const ac_tlm_req &request ) {
     if ( request.addr == 0xFFFFFFFF )
       return lock->transport(request);
+    else if ( request.addr == 0xFFFFFFFE )
+      return randcomp->transport(request);
     else
       return mem->transport(request);
   }
 
 private:
-  ac_tlm_transport_if *mem, *lock;
+  ac_tlm_transport_if *mem, *lock, *randcomp;
 
 };
 

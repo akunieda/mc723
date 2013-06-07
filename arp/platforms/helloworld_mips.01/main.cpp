@@ -23,11 +23,13 @@ const char *archc_options="-abi -dy ";
 #include  "mips1.H"
 #include  "ac_tlm_mem.h"
 #include  "ac_tlm_lock.h"
+#include  "ac_tlm_rand.h"
 #include  "router.h"
 
 using user::ac_tlm_mem;
 using user::ac_tlm_lock;
 using user::router_t;
+using user::ac_tlm_rand;
 
 char ** copy_arg(int ac, char *av[]) {
   char **av0;
@@ -59,7 +61,8 @@ int sc_main(int ac, char *av[])
 
   ac_tlm_mem mem("mem");
   ac_tlm_lock lock("lock");
-  router_t router("router", &mem, &lock);
+  ac_tlm_rand randcomp("rand");
+  router_t router("router", &mem, &lock, &randcomp);
 
 #ifdef AC_DEBUG
   ac_trace("mips1_proc1.trace");
