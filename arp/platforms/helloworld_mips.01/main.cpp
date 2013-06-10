@@ -51,10 +51,7 @@ int sc_main(int ac, char *av[])
 
   for(int n=0; n<num_proc; n++) {
     char * name = (char *) malloc(6*sizeof(char));
-    char buffer[3];
-    sprintf(buffer, "%d", n);
-    strcpy(name, "mips");
-    strcat(name, buffer);
+    sprintf(name, "mips%d", n);
     printf("%s\n", name);
     k_proc[n] = new mips1(name, n);
   } 

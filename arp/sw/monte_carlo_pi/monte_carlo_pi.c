@@ -3,21 +3,17 @@
 #include <time.h>
 
 const int NITER = 1024;
-const double R = 0.5;
+const float R = 0.5f;
 
 int main(int argc, char *argv[]){
   int i;
-  double x, y;
+  float x, y;
   int hit = 0;
 
-  volatile int* random = (volatile int*) 0xEEEEEEEE;
-
-  srand(time(NULL));
+  volatile float* random = (volatile float*) 0xFFFFFFFE;
   for(i=0;i<NITER;i++) {
-    x = ((double) rand()) / ((double) RAND_MAX) - R;
-    y = ((double) rand()) / ((double) RAND_MAX) - R;
-    /* x = *random - R; */
-    /* y = *random - R; */
+    x = *random - R;
+    y = *random - R;
     if (x*x + y*y <= R*R) hit++;
   }
 
