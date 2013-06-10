@@ -76,7 +76,7 @@ public:
 
 private:
 	uint *mt;
-	uint idx=0;
+	uint idx;
 	static const uint LENGTH=624;
 	static const uint BITMASK_32=0xffffffff;
 	static const uint BITPOW_31=1<<31;

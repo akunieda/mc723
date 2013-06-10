@@ -12,6 +12,7 @@
 using user::ac_tlm_rand;
 
 void ac_tlm_rand::setSeed(uint seed){
+	idx = 0;
 	mt=new uint[LENGTH];
 	mt[0]=seed;
 	for(uint i=1;i<LENGTH;i++) mt[i]=(1812433253*(mt[i-1]^(mt[i-1]>>30))+i)&BITMASK_32;
@@ -58,7 +59,6 @@ ac_tlm_rsp_status ac_tlm_rand::readm( uint32_t &d )
 	uint random = getRandomNumber();
 	uint32_t rand_number;
 	float rand_norm = ((float) random) / ((float) BITMASK_32);
-	printf("random normalized: %f\n", rand_norm);
 	memcpy(&rand_number, &rand_norm, sizeof(uint32_t));
 	d = __builtin_bswap32(rand_number);
 
