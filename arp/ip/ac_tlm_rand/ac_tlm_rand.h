@@ -13,6 +13,10 @@
 // ================================================================================================
 using tlm::tlm_transport_if;
 
+//#define LENGTH 624
+//#define BITMASK_32 0xffffffff
+//#define BITPOW_31 0x80000000
+
 // ================================================================================================
 
 //#define DEBUG
@@ -65,10 +69,21 @@ public:
   /**
    * Default constructor.
    *
-   * @param k Memory size in kilowords.
+   * 
    *
    */
  	ac_tlm_rand( sc_module_name module_name);
+
+private:
+	uint *mt;
+	uint idx=0;
+	static const uint LENGTH=624;
+	static const uint BITMASK_32=0xffffffff;
+	static const uint BITPOW_31=1<<31;
+
+	void setSeed(uint);
+	uint getRandomNumber();
+	void gen();
 
 };
 };
