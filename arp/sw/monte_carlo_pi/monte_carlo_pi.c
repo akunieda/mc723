@@ -3,7 +3,6 @@
 #include <time.h>
 
 const int NITER = 1024;
-const float R = 0.5f;
 volatile int hit = 0;
 volatile int total = 0;
 
@@ -14,9 +13,9 @@ int main(int argc, char *argv[]){
 
   volatile float* random = (volatile float*) 0xFFFFFFFE;
   for(i=0;i<NITER;i++) {
-    x = *random - R;
-    y = *random - R;
-    if (x*x + y*y <= R*R) local_hit++;
+    x = *random;
+    y = *random;
+    if (x*x + y*y <= 1.f) local_hit++;
   }
 
   volatile int* lock = (volatile int*) 0xFFFFFFFF;
