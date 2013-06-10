@@ -1,16 +1,7 @@
-/*
-Grupo 31
-Alexandre Luiz Brisighello Filho
-Alexandre Nobuo Kunieda
-Bruno Gustavo Salomão Agostini
-
-router.h
-*/
-
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef ROUTER_H_
-#define ROUTER_H_
+#ifndef AC_TLM_CHECK_H_
+#define AC_TLM_CHECK_H_
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -19,14 +10,6 @@ router.h
 #include <systemc>
 // ArchC includes
 #include "ac_tlm_protocol.H"
-// Memory
-#include "ac_tlm_mem.h"
-// Lock
-#include "ac_tlm_lock.h"
-// Rand
-#include "ac_tlm_rand.h"
-// Check
-#include "ac_tlm_check.h"
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -42,7 +25,7 @@ namespace user
 {
 
 /// A TLM memory
-class router_t :
+class ac_tlm_check :
   public sc_module,
   public ac_tlm_transport_if // Using ArchC TLM protocol
 {
@@ -51,37 +34,51 @@ public:
   sc_export< ac_tlm_transport_if > target_export;
 
   /**
-   * Default constructor.
-   *
-   * @param *mem Memory to be attached to this router
-   * @param *lock Lock to be attached to this router
-   *
-   */
-  router_t( sc_module_name module_name, ac_tlm_mem *mem, ac_tlm_lock *lock, ac_tlm_rand *randcomp, ac_tlm_check *check);
-
-  /**
    * Implementation of TLM transport method that
    * handle packets of the protocol doing apropriate actions.
    * This method must be implemented (required by SystemC TLM).
    * @param request is a received request packet
    * @return A response packet to be send
   */
+
+  ac_tlm_rsp_status readm( uint32_t, uint32_t & );
+
   ac_tlm_rsp transport( const ac_tlm_req &request ) {
-    if ( request.addr == 0xFFFFFFFF )
-      return lock->transport(request);
-    else if ( request.addr == 0xFFFFFFFE )
-      return randcomp->transport(request);
-    else if ( request.addr >= 0xFFFFFFFD - 10000 )
-      return check->transport(request);
-    else
-      return mem->transport(request);
+
+    ac_tlm_rsp response;
+
+    switch( request.type ) {
+    case READ :     // Packet is a READ one
+      response.status = readm( request.addr - (0xFFFFFFFD - 10000),
+			       response.data );
+      #ifdef DEBUG  // Turn it on to print transport level messages
+    cout << "Is the key ";
+    cout << request.addr - (0xFFFFFFFD - 10000);
+    cout << " correct? ";
+    cout << response.data << endl;
+      #endif
+      break;
+
+    default :
+      response.status = ERROR;
+      break;
+    }
+
+    return response;
   }
 
+
+  /**
+   * Default constructor.
+   *
+   */
+  ac_tlm_check( sc_module_name module_name);
+
 private:
-  ac_tlm_transport_if *mem, *lock, *randcomp, *check;
+  uint32_t key;
 
 };
 
 };
 
-#endif //ROUTER_H_
+#endif //AC_TLM_CHECK_H_

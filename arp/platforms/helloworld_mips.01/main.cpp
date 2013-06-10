@@ -24,21 +24,29 @@ const char *archc_options="-abi -dy ";
 #include  "ac_tlm_mem.h"
 #include  "ac_tlm_lock.h"
 #include  "ac_tlm_rand.h"
+#include  "ac_tlm_check.h"
 #include  "router.h"
 
 using user::ac_tlm_mem;
 using user::ac_tlm_lock;
-using user::router_t;
 using user::ac_tlm_rand;
+using user::ac_tlm_check;
+using user::router_t;
 
-char ** copy_arg(int ac, char *av[]) {
+char ** copy_arg(int ac, char *av[], int nproc, int tproc) {
   char **av0;
 
-  av0 = (char**) malloc(ac * sizeof(char*));
+  av0 = (char**) malloc((ac+2) * sizeof(char*));
   for(int i=0; i<ac; ++i) {
     av0[i] = (char*) malloc(sizeof(av[i]) + 1);
     strcpy(av0[i], av[i]);
   }
+
+  av0[ac] = (char*) malloc(2 * sizeof(char));
+  sprintf(av0[ac], "%d", nproc);
+
+  av0[ac+1] = (char*) malloc(2 * sizeof(char));
+  sprintf(av0[ac+1], "%d", tproc);
 
   return av0;
 }
@@ -47,10 +55,10 @@ int sc_main(int ac, char *av[])
 {
   int num_proc = 5;
   //!  ISA simulator
-  mips1 *k_proc[num_proc];
+  mips1* k_proc[num_proc];
 
   for(int n=0; n<num_proc; n++) {
-    char * name = (char *) malloc(6*sizeof(char));
+    char* name = (char*) malloc(6 * sizeof(char));
     sprintf(name, "mips%d", n);
     printf("%s\n", name);
     k_proc[n] = new mips1(name, n);
@@ -59,7 +67,8 @@ int sc_main(int ac, char *av[])
   ac_tlm_mem mem("mem");
   ac_tlm_lock lock("lock");
   ac_tlm_rand randcomp("rand");
-  router_t router("router", &mem, &lock, &randcomp);
+  ac_tlm_check check("check");
+  router_t router("router", &mem, &lock, &randcomp, &check);
 
 #ifdef AC_DEBUG
   ac_trace("mips1_proc1.trace");
@@ -70,8 +79,8 @@ int sc_main(int ac, char *av[])
   char **av_proc[num_proc];
   for(int n=0; n<num_proc; n++) {
     k_proc[n]->DM_port(router.target_export);
-    av_proc[n] = copy_arg(ac,av);
-    ac_proc[n] = ac_b;
+    av_proc[n] = copy_arg(ac, av, n, num_proc);
+    ac_proc[n] = ac_b + 2;
   }
 
   for(int n=0; n<num_proc; n++) 
@@ -94,6 +103,12 @@ int sc_main(int ac, char *av[])
 #ifdef AC_DEBUG
   ac_close_trace();
 #endif 
+
+  for(int n=0; n<num_proc; n++) {
+    for(int i=0; i<ac+2; ++i)
+      free(av_proc[n][i]);
+    free(av_proc[n]);
+  }
 
 //  return mips1_proc0.ac_exit_status;
     return k_proc[0]->ac_exit_status;
