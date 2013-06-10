@@ -1,5 +1,5 @@
 IP := ac_tlm_mem ac_tlm_lock ac_tlm_rand ac_tlm_check
 IS := router
 PROCESSOR := mips1
-SW := brute_force
+SW := monte_carlo_pi
 WRAPPER := 
